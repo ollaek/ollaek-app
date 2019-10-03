@@ -17,7 +17,7 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 
-const DemoNavbar = () => {
+const DemoNavbar = ({ toggleModal }) => {
   useEffect(() => {
     let headroom = new Headroom(document.getElementById("navbar-main"));
     // initialise
@@ -119,8 +119,7 @@ const DemoNavbar = () => {
                   <Button
                     className="btn-neutral btn-icon"
                     color="default"
-                    href="https://www.creative-tim.com/product/argon-design-system-react?ref=adsr-navbar"
-                    target="_blank"
+                    onClick={toggleModal}
                   >
                     <span className="btn-inner--icon">
                       <i className="fa fa-power-off mr-2" />
