@@ -27,12 +27,6 @@ const items = [
     caption: "",
     header: ""
   },
-  {
-    src: require("assets/img/fifa201.jpg"),
-    altText: "",
-    caption: "",
-    header: ""
-  }
 ];
 
 class Carousel extends React.Component {

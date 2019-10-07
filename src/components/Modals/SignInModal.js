@@ -9,19 +9,18 @@ import {
   CardHeader,
   CardBody,
   FormGroup,
-  Form,
   Input,
   InputGroupAddon,
   InputGroupText,
   InputGroup,
   Modal
 } from "reactstrap";
-import { Formik } from "formik";
+import { Formik, Form } from "formik";
+import * as Yup from "yup";
 
 const SignInModal = ({ toggleModal, changeToggleModal }) => {
   const [emailFocused, setEmailFocused] = useState(null);
   const [passwordFocused, setPasswordFocused] = useState(null);
-  let user = { email: null, password: null };
   const mailFocus = () => {
     setEmailFocused(!emailFocused);
   };
@@ -29,17 +28,36 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
     setPasswordFocused(!passwordFocused);
   };
 
-  const onLoginClick = async () => {
-    debugger;
-    user.email = document.getElementById("email").value;
-    user.password = document.getElementById("password").value;
-    try {
-      const token = await SignInService(user);
-      localStorage.setItem("token", token.data.access_token);
-    } catch (ex) {
-      console.log(ex);
+ 
+
+  const SigninSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Invalid email")
+      .required("Required"),
+    password: Yup.string()
+      .min(8, "Password is too short - should be 8 chars minimum.")
+      .matches(/[a-zA-Z]/, "Password can only contain Latin letters.")
+      .required("Required")
+  });
+
+  function validateEmail(value) {
+    let error;
+    if (!value) {
+      error = 'Required';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      error = 'Invalid email address';
     }
-  };
+    return error;
+  }
+  function validatePassword(value) {
+    let error;
+    if (!value) {
+      error = 'Required';
+    } else if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/i.test(value)) {
+      error = 'Minimum eight characters, at least one letter, one number and one special character';
+    }
+    return error;
+  }
 
   return (
     <Modal
@@ -89,72 +107,100 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
             <div className="text-center text-muted mb-4">
               <small>Or sign in with credentials</small>
             </div>
-            <Form role="form">
-              <FormGroup
-                className={classnames("mb-3", {
-                  focused: emailFocused
-                })}
-              >
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="ni ni-email-83" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Email"
-                    type="email"
-                    onFocus={mailFocus}
-                    onBlur={mailFocus}
-                    id="email"
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup
-                className={classnames({
-                  focused: passwordFocused
-                })}
-              >
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="ni ni-lock-circle-open" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Password"
-                    type="password"
-                    autoComplete="off"
-                    onFocus={passwordFocus}
-                    onBlur={passwordFocus}
-                    id="password"
-                  />
-                </InputGroup>
-              </FormGroup>
-              <div className="custom-control custom-control-alternative custom-checkbox">
-                <input
-                  className="custom-control-input"
-                  id=" customCheckLogin"
-                  type="checkbox"
-                />
-                <label
-                  className="custom-control-label"
-                  htmlFor=" customCheckLogin"
-                >
-                  <span className="text-muted">Remember me</span>
-                </label>
-              </div>
-              <div className="text-center">
-                <Button
-                  className="my-4"
-                  color="primary"
-                  type="button"
-                  onClick={onLoginClick}
-                >
-                  Sign in
-                </Button>
-              </div>
-            </Form>
+            <Formik
+              initialValues={{
+                email: "",
+                password: ""
+              }}
+              onSubmit={values => {
+                debugger;
+                try {
+                  const token = SignInService(values);
+                  localStorage.setItem("token", token.data.access_token);
+                } catch (ex) {
+                  console.log(ex);
+                }
+                console.log(values);
+              }}
+            >
+              {({ errors, touched, isValidating }) => (
+                <Form role="form">
+                  <FormGroup
+                    className={classnames("mb-3", {
+                      focused: emailFocused
+                    })}
+                  >
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="ni ni-email-83" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        placeholder="Email"
+                        name="email"
+                        type="email"
+                        onFocus={mailFocus}
+                        onBlur={mailFocus}
+                        id="email"
+                        validate={validateEmail}
+                      />
+                      
+                    </InputGroup>
+                    
+                  </FormGroup>
+                  {errors.email && touched.email && <div>{errors.email}</div>}
+                  <FormGroup
+                    className={classnames({
+                      focused: passwordFocused
+                    })}
+                  >
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="ni ni-lock-circle-open" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        placeholder="Password"
+                        name="password"
+                        type="password"
+                        autoComplete="off"
+                        onFocus={passwordFocus}
+                        onBlur={passwordFocus}
+                        id="password"
+                        validate={validatePassword}
+                      />
+                      
+                    </InputGroup>
+                  </FormGroup>
+                  {errors.password && touched.password && <div>{errors.password}</div>}
+
+                  <div className="custom-control custom-control-alternative custom-checkbox">
+                    <input
+                      className="custom-control-input"
+                      id=" customCheckLogin"
+                      type="checkbox"
+                    />
+                    <label
+                      className="custom-control-label"
+                      htmlFor=" customCheckLogin"
+                    >
+                      <span className="text-muted">Remember me</span>
+                    </label>
+                  </div>
+                  <div className="text-center">
+                    <Button
+                      className="my-4"
+                      color="primary"
+                      type="submit"
+                    >
+                      Sign in
+                    </Button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </CardBody>
         </Card>
       </div>
