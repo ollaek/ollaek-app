@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {SignInService} from "../../services/SignInService";
+import { SignInService } from "../../services/SignInService";
 
 import classnames from "classnames";
 // reactstrap components
@@ -16,11 +16,12 @@ import {
   InputGroup,
   Modal
 } from "reactstrap";
+import { Formik } from "formik";
 
 const SignInModal = ({ toggleModal, changeToggleModal }) => {
   const [emailFocused, setEmailFocused] = useState(null);
-  const [passwordFocused, setPasswordFocused] = useState(null);;
-  let user = { email : null , password : null};
+  const [passwordFocused, setPasswordFocused] = useState(null);
+  let user = { email: null, password: null };
   const mailFocus = () => {
     setEmailFocused(!emailFocused);
   };
@@ -29,17 +30,16 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
   };
 
   const onLoginClick = async () => {
-      debugger;
+    debugger;
     user.email = document.getElementById("email").value;
     user.password = document.getElementById("password").value;
-    try{
-        const token = await SignInService(user);
-        localStorage.setItem('token', token.data.access_token);
-    }catch(ex){
-        console.log(ex);
+    try {
+      const token = await SignInService(user);
+      localStorage.setItem("token", token.data.access_token);
+    } catch (ex) {
+      console.log(ex);
     }
-    
-  }
+  };
 
   return (
     <Modal
@@ -145,7 +145,12 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
                 </label>
               </div>
               <div className="text-center">
-                <Button className="my-4" color="primary" type="button" onClick={onLoginClick}>
+                <Button
+                  className="my-4"
+                  color="primary"
+                  type="button"
+                  onClick={onLoginClick}
+                >
                   Sign in
                 </Button>
               </div>
