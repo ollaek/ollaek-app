@@ -27,7 +27,6 @@ const items = [
     caption: "",
     header: ""
   },
- 
 ];
 
 class Carousel extends React.Component {

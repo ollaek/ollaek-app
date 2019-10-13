@@ -25,6 +25,7 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [SignInState, SetSignInState] = useState(null);
   const emailFocus = () => {
+
     setEmailFocused(!emailFocused);
   };
   const passwordFocus = () => {
@@ -45,7 +46,9 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
     } catch (ex) {
       console.log(ex);
     }
-  };
+  }
+ 
+
 
   const SignupSchema = Yup.object().shape({
     password: Yup.string()
@@ -81,7 +84,6 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
             <div className="text-center text-muted mb-4">
               <small>Or sign in with credentials</small>
             </div>
-
             <Formik
               initialValues={{
                 email: "",
@@ -98,32 +100,6 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
                   <FormGroup
                     className={classnames({
                       focused: emailFocus
-                    })}
-                  >
-                    <InputGroup className="input-group-alternative">
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="ni ni-email-83" />
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input
-                        tag={Field}
-                        name="email"
-                        placeholder="Email"
-                        type="text"
-                        onFocus={emailFocus}
-                        onBlur={emailFocus}
-                      />
-                    </InputGroup>
-                  </FormGroup>
-
-                  {errors.email && touched.email ? (
-                    <small style={{ color: "red" }}> {errors.mail}</small>
-                  ) : null}
-
-                  <FormGroup
-                    className={classnames({
-                      focused: passwordFocus
                     })}
                   >
                     <InputGroup className="input-group-alternative">
