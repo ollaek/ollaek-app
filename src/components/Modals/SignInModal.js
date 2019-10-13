@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { SignInService } from "../../services/SignInService";
+import FacebookLoginButton from "../CustomTags/FacebookLiginButton";
+import GoogleLoginButton from "../CustomTags/GoogleLoginButton";
 
 import classnames from "classnames";
 // reactstrap components
@@ -9,37 +11,52 @@ import {
   CardHeader,
   CardBody,
   FormGroup,
-  Form,
   Input,
   InputGroupAddon,
   InputGroupText,
   InputGroup,
   Modal
 } from "reactstrap";
-import { Formik } from "formik";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
 
 const SignInModal = ({ toggleModal, changeToggleModal }) => {
-  const [emailFocused, setEmailFocused] = useState(null);
-  const [passwordFocused, setPasswordFocused] = useState(null);
-  let user = { email: null, password: null };
-  const mailFocus = () => {
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [SignInState, SetSignInState] = useState(null);
+  const emailFocus = () => {
     setEmailFocused(!emailFocused);
   };
   const passwordFocus = () => {
     setPasswordFocused(!passwordFocused);
   };
 
-  const onLoginClick = async () => {
+  const OnSubmittingSignIn = async values => {
     debugger;
-    user.email = document.getElementById("email").value;
-    user.password = document.getElementById("password").value;
     try {
-      const token = await SignInService(user);
-      localStorage.setItem("token", token.data.access_token);
+      const token = await SignInService(values);
+      console.log(token);
+      if (token.status === 200) {
+        SetSignInState(true);
+        localStorage.setItem("token", token.data.access_token);
+      } else {
+        SetSignInState(false);
+      }
     } catch (ex) {
       console.log(ex);
     }
   };
+
+  const SignupSchema = Yup.object().shape({
+    password: Yup.string()
+      .min(2, "Too Short!")
+      .max(50, "Too Long!")
+      .required("Required"),
+
+    email: Yup.string()
+      .email("Invalid email")
+      .required("Required")
+  });
 
   return (
     <Modal
@@ -55,106 +72,108 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
               <small>Sign in with</small>
             </div>
             <div className="btn-wrapper text-center">
-              <Button
-                className="btn-icon mt-2 mb-2"
-                color="neutral"
-                href="#pablo"
-                onClick={e => e.preventDefault()}
-              >
-                <span className="btn-inner--icon mr-1">
-                  <img
-                    alt="..."
-                    src={require("assets/img/icons/common/facebook.png")}
-                  />
-                </span>
-                <span className="btn-inner--text">FACEBOOK</span>
-              </Button>
-              <Button
-                className="btn-icon mt-2 mb-2 ml-1"
-                color="neutral"
-                href="#pablo"
-                onClick={e => e.preventDefault()}
-              >
-                <span className="btn-inner--icon mr-1">
-                  <img
-                    alt="..."
-                    src={require("assets/img/icons/common/google.svg")}
-                  />
-                </span>
-                <span className="btn-inner--text">Google</span>
-              </Button>
+              <FacebookLoginButton />
+              <GoogleLoginButton />
+              
             </div>
           </CardHeader>
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
               <small>Or sign in with credentials</small>
             </div>
-            <Form role="form">
-              <FormGroup
-                className={classnames("mb-3", {
-                  focused: emailFocused
-                })}
-              >
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="ni ni-email-83" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Email"
-                    type="email"
-                    onFocus={mailFocus}
-                    onBlur={mailFocus}
-                    id="email"
-                  />
-                </InputGroup>
-              </FormGroup>
-              <FormGroup
-                className={classnames({
-                  focused: passwordFocused
-                })}
-              >
-                <InputGroup className="input-group-alternative">
-                  <InputGroupAddon addonType="prepend">
-                    <InputGroupText>
-                      <i className="ni ni-lock-circle-open" />
-                    </InputGroupText>
-                  </InputGroupAddon>
-                  <Input
-                    placeholder="Password"
-                    type="password"
-                    autoComplete="off"
-                    onFocus={passwordFocus}
-                    onBlur={passwordFocus}
-                    id="password"
-                  />
-                </InputGroup>
-              </FormGroup>
-              <div className="custom-control custom-control-alternative custom-checkbox">
-                <input
-                  className="custom-control-input"
-                  id=" customCheckLogin"
-                  type="checkbox"
-                />
-                <label
-                  className="custom-control-label"
-                  htmlFor=" customCheckLogin"
-                >
-                  <span className="text-muted">Remember me</span>
-                </label>
-              </div>
-              <div className="text-center">
-                <Button
-                  className="my-4"
-                  color="primary"
-                  type="button"
-                  onClick={onLoginClick}
-                >
-                  Sign in
-                </Button>
-              </div>
-            </Form>
+
+            <Formik
+              initialValues={{
+                email: "",
+                password: ""
+              }}
+              validationSchema={SignupSchema}
+              onSubmit={values => {
+                console.log(values)
+                OnSubmittingSignIn(values);
+              }}
+            >
+              {({ errors, touched }) => (
+                <Form role="form">
+                  <FormGroup
+                    className={classnames({
+                      focused: emailFocus
+                    })}
+                  >
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="ni ni-email-83" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        tag={Field}
+                        name="email"
+                        placeholder="Email"
+                        type="text"
+                        onFocus={emailFocus}
+                        onBlur={emailFocus}
+                      />
+                    </InputGroup>
+                  </FormGroup>
+
+                  {errors.email && touched.email ? (
+                    <small style={{ color: "red" }}> {errors.mail}</small>
+                  ) : null}
+
+                  <FormGroup
+                    className={classnames({
+                      focused: passwordFocus
+                    })}
+                  >
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="ni ni-lock-circle-open" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        tag={Field}
+                        name="password"
+                        placeholder="Password"
+                        type="password"
+                        autoComplete="off"
+                        onFocus={passwordFocus}
+                        onBlur={passwordFocus}
+                      />
+                    </InputGroup>
+                  </FormGroup>
+
+                  {errors.password && touched.password ? (
+                    <small style={{ color: "red" }}> {errors.password}</small>
+                  ) : null}
+                  {SignInState === false ? (
+                    <small style={{ color: "red" }}>
+                      Email Or Password are not correct !!
+                    </small>
+                  ) : null}
+                  <div className="custom-control custom-control-alternative custom-checkbox">
+                    <input
+                      className="custom-control-input"
+                      id=" customCheckLogin"
+                      type="checkbox"
+                    />
+                    <label
+                      className="custom-control-label"
+                      htmlFor=" customCheckLogin"
+                    >
+                      <span className="text-muted">Remember me</span>
+                    </label>
+                  </div>
+                  
+                  <div className="text-center">
+                    <Button className="my-4" color="primary" type="submit">
+                      Sign in
+                    </Button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </CardBody>
         </Card>
       </div>

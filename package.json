@@ -48,20 +48,26 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@material-ui/core": "^4.5.0",
     "axios": "^0.19.0",
     "classnames": "2.2.6",
     "formik": "^1.5.8",
     "headroom.js": "0.9.4",
+    "install": "^0.13.0",
     "moment": "2.24.0",
     "node-sass": "4.12.0",
     "nouislider": "13.1.5",
+    "npm": "^6.12.0",
     "react": "16.8.6",
     "react-datetime": "2.16.3",
     "react-dom": "16.8.6",
+    "react-facebook-login": "^4.1.1",
+    "react-google-login": "^5.0.5",
     "react-router": "5.0.0",
     "react-router-dom": "5.0.0",
     "react-scripts": "3.0.0",
-    "reactstrap": "8.0.0"
+    "reactstrap": "8.0.0",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@types/googlemaps": "3.30.19",
