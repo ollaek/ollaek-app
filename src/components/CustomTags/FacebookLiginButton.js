@@ -8,8 +8,8 @@ import FacebookSignInService from "../../services/FacebookSignInService";
 const FacebookLoginButton = () => {
     const responseFacebook = (response) => {
         if(response){
-          var res = FacebookSignInService(response);
-          console.log(res);
+          //var res = FacebookSignInService(response);
+          console.log(response);
         }
     }
   return (

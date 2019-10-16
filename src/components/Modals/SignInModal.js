@@ -40,6 +40,7 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
       if (token.status === 200) {
         SetSignInState(true);
         localStorage.setItem("token", token.data.access_token);
+        localStorage.setItem("name", token.data.userName);
       } else {
         SetSignInState(false);
       }
@@ -100,6 +101,31 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
                   <FormGroup
                     className={classnames({
                       focused: emailFocus
+                    })}
+                  >
+                   <InputGroup className="input-group-alternative">	
+                      <InputGroupAddon addonType="prepend">	
+                        <InputGroupText>	
+                          <i className="ni ni-email-83" />	
+                        </InputGroupText>	
+                      </InputGroupAddon>	
+                      <Input	
+                        tag={Field}	
+                        name="email"	
+                        placeholder="Email"	
+                        type="text"	
+                        onFocus={emailFocus}	
+                        onBlur={emailFocus}	
+                      />	
+                    </InputGroup>	
+                  </FormGroup>	
+
+                  {errors.email && touched.email ? (	
+                    <small style={{ color: "red" }}> {errors.mail}</small>	
+                  ) : null}
+                  <FormGroup
+                    className={classnames({
+                      focused: passwordFocus
                     })}
                   >
                     <InputGroup className="input-group-alternative">

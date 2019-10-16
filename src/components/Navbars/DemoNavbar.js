@@ -16,13 +16,57 @@ import {
   Col,
   UncontrolledTooltip
 } from "reactstrap";
+import "../Navbars/signIn.css";
+import useLogIn from "../../hooks/useLogin";
 
 const DemoNavbar = ({ toggleModal }) => {
+  const isLoggedIn = useLogIn(localStorage.getItem("token"));
   useEffect(() => {
     let headroom = new Headroom(document.getElementById("navbar-main"));
-    // initialise
+    // initialize
     headroom.init();
   }, []);
+  const renderLoginSection = () => {
+    debugger;
+    if (isLoggedIn === true) {
+      return (
+        <NavItem className="d-lg-block ml-lg-4">
+          <NavLink
+            style={{cursor : "pointer"}}
+            className="nav-link-icon"
+            id="profile"
+            onClick={() => alert("asas")}
+          >
+            <img
+              alt="..."
+              className="img-fluid rounded-circle shadow"
+              src={require("assets/img/theme/team-1-800x800.jpg")}
+              style={{ width: "50px", marginRight: "20px" }}
+            />
+            Hamada
+          </NavLink>
+          <UncontrolledTooltip delay={0} target="profile">
+            View Profile
+          </UncontrolledTooltip>
+        </NavItem>
+      );
+    } else {
+      return (
+        <NavItem className="d-lg-block ml-lg-4">
+          <Button
+            className="btn-neutral btn-icon change-color"
+            color="default"
+            onClick={toggleModal}
+          >
+            <span className="btn-inner--icon">
+              <i className="fa fa-power-off mr-2" />
+            </span>
+            <span className="nav-link-inner--text ml-1">SIGN IN</span>
+          </Button>
+        </NavItem>
+      );
+    }
+  };
   return (
     <>
       <header className="header-global">
@@ -115,18 +159,7 @@ const DemoNavbar = ({ toggleModal }) => {
                 </NavItem>
               </Nav>
               <Nav className="align-items-lg-center ml-lg-auto" navbar>
-                <NavItem className="d-none d-lg-block ml-lg-4">
-                  <Button
-                    className="btn-neutral btn-icon"
-                    color="default"
-                    onClick={toggleModal}
-                  >
-                    <span className="btn-inner--icon">
-                      <i className="fa fa-power-off mr-2" />
-                    </span>
-                    <span className="nav-link-inner--text ml-1">SIGN IN</span>
-                  </Button>
-                </NavItem>
+                {renderLoginSection()}
               </Nav>
             </UncontrolledCollapse>
           </Container>
