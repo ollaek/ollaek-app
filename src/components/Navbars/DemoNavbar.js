@@ -18,6 +18,7 @@ import {
 } from "reactstrap";
 import "../Navbars/signIn.css";
 import useLogIn from "../../hooks/useLogin";
+import {getUserInfo} from "../../services/getUserInfo";
 
 const DemoNavbar = ({ toggleModal }) => {
   const isLoggedIn = useLogIn(localStorage.getItem("token"));
@@ -26,9 +27,19 @@ const DemoNavbar = ({ toggleModal }) => {
     // initialize
     headroom.init();
   }, []);
-  const renderLoginSection = () => {
+
+  
+  const renderLoginSection = async() => {
     debugger;
     if (isLoggedIn === true) {
+      try{
+        const user = await getUserInfo();
+        console.log(user);
+      }catch(ex){
+        console.log(ex);
+
+      }
+      
       return (
         <NavItem className="d-lg-block ml-lg-4">
           <NavLink
@@ -43,7 +54,7 @@ const DemoNavbar = ({ toggleModal }) => {
               src={require("assets/img/theme/team-1-800x800.jpg")}
               style={{ width: "50px", marginRight: "20px" }}
             />
-            Hamada
+            user
           </NavLink>
           <UncontrolledTooltip delay={0} target="profile">
             View Profile
