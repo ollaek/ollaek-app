@@ -1,5 +1,5 @@
 
-import Token from "../apis/oauth";
+import Token from "../apis/account";
 
 export const getUserInfo =  () => {
   

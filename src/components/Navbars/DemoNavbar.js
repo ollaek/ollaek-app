@@ -28,16 +28,18 @@ const DemoNavbar = ({ toggleModal }) => {
     headroom.init();
   }, []);
 
-  
-  const renderLoginSection = async() => {
+  const renderLoginSection = () => {
     debugger;
+    let user;
     if (isLoggedIn === true) {
       try{
-        const user = await getUserInfo();
+       user = getUserInfo().then((res)=>{
+         user = res.data
+         alert(user.Email);
+       });
         console.log(user);
       }catch(ex){
         console.log(ex);
-
       }
       
       return (
@@ -54,7 +56,7 @@ const DemoNavbar = ({ toggleModal }) => {
               src={require("assets/img/theme/team-1-800x800.jpg")}
               style={{ width: "50px", marginRight: "20px" }}
             />
-            user
+            {user.Email}
           </NavLink>
           <UncontrolledTooltip delay={0} target="profile">
             View Profile

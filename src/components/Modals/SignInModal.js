@@ -41,6 +41,7 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
         SetSignInState(true);
         localStorage.setItem("token", token.data.access_token);
         localStorage.setItem("name", token.data.userName);
+        changeToggleModal();
       } else {
         SetSignInState(false);
       }

@@ -8,14 +8,13 @@ import FacebookSignInService from "../../services/FacebookSignInService";
 const FacebookLoginButton = () => {
     const responseFacebook = (response) => {
         if(response){
-          //var res = FacebookSignInService(response);
-          console.log(response);
+          var res = FacebookSignInService(response);
+          console.log(res);
         }
     }
   return (
     <FacebookLogin
     appId="375973446613378"
-    autoLoad
     fields="name,email,picture"
     callback={responseFacebook}
     render={renderProps => (
