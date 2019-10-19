@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 // JavaScript plugin that hides or shows a component based on your scroll
 import Headroom from "headroom.js";
@@ -14,49 +14,81 @@ import {
   Container,
   Row,
   Col,
-  UncontrolledTooltip
+  UncontrolledTooltip,
+  DropdownMenu,
+  DropdownItem,
+  DropdownToggle,
+  UncontrolledDropdown
 } from "reactstrap";
 import "../Navbars/signIn.css";
 import useLogIn from "../../hooks/useLogin";
-import {getUserInfo} from "../../services/getUserInfo";
 
 const DemoNavbar = ({ toggleModal }) => {
-  const isLoggedIn = useLogIn(localStorage.getItem("token"));
+  let isLoggedIn = useLogIn(localStorage.getItem("token"));
   useEffect(() => {
     let headroom = new Headroom(document.getElementById("navbar-main"));
     // initialize
     headroom.init();
-  }, []);
-
-  const renderLoginSection = () => {
-    debugger;
-    let user;
+  }, [isLoggedIn]);
+  const renderSettingsSection = () => {
     if (isLoggedIn === true) {
-      try{
-       user = getUserInfo().then((res)=>{
-         user = res.data
-         alert(user.Email);
-       });
-        console.log(user);
-      }catch(ex){
-        console.log(ex);
-      }
-      
+      return (
+        <UncontrolledDropdown nav inNavbar>
+          <DropdownToggle nav className="nav-link-icon">
+            <i className="ni ni-settings-gear-65" />
+            <span className="nav-link-inner--text d-lg-none">Settings</span>
+          </DropdownToggle>
+          <DropdownMenu
+            aria-labelledby="navbar-default_dropdown_1"
+            right
+            style={{ textAlign: "center" }}
+          >
+            <DropdownItem onClick={e => e.preventDefault()}>
+              Language
+            </DropdownItem>
+
+            <DropdownItem divider />
+            <DropdownItem onClick={() => onLogOut()}>LogOut</DropdownItem>
+          </DropdownMenu>
+        </UncontrolledDropdown>
+      );
+    } else {
+      return (
+        <UncontrolledDropdown nav inNavbar>
+          <DropdownToggle nav className="nav-link-icon">
+            <i className="ni ni-settings-gear-65" />
+            <span className="nav-link-inner--text d-lg-none">Settings</span>
+          </DropdownToggle>
+          <DropdownMenu
+            aria-labelledby="navbar-default_dropdown_1"
+            right
+            style={{ textAlign: "center" }}
+          >
+            <DropdownItem onClick={e => e.preventDefault()}>
+              Language
+            </DropdownItem>
+          </DropdownMenu>
+        </UncontrolledDropdown>
+      );
+    }
+  };
+  const renderLoginSection = () => {
+    if (isLoggedIn === true) {
       return (
         <NavItem className="d-lg-block ml-lg-4">
           <NavLink
-            style={{cursor : "pointer"}}
+            style={{ cursor: "pointer" }}
             className="nav-link-icon"
             id="profile"
-            onClick={() => alert("asas")}
+            onClick={() => alert("Lessa shewaya")}
           >
             <img
               alt="..."
               className="img-fluid rounded-circle shadow"
-              src={require("assets/img/theme/team-1-800x800.jpg")}
-              style={{ width: "50px", marginRight: "20px" }}
+              src={localStorage.getItem("profilePicture")}
+              style={{ width: "40px", marginRight: "20px" }}
             />
-            {user.Email}
+            {localStorage.getItem("name")}
           </NavLink>
           <UncontrolledTooltip delay={0} target="profile">
             View Profile
@@ -79,6 +111,13 @@ const DemoNavbar = ({ toggleModal }) => {
         </NavItem>
       );
     }
+  };
+
+  const onLogOut = () => {
+    isLoggedIn = !isLoggedIn;
+    localStorage.removeItem("token");
+    localStorage.removeItem("name");
+    localStorage.removeItem("profilePicture");
   };
   return (
     <>
@@ -173,6 +212,7 @@ const DemoNavbar = ({ toggleModal }) => {
               </Nav>
               <Nav className="align-items-lg-center ml-lg-auto" navbar>
                 {renderLoginSection()}
+                {renderSettingsSection()}
               </Nav>
             </UncontrolledCollapse>
           </Container>

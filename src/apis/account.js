@@ -5,7 +5,7 @@ const getToken = () => {
 };
 
 export default axios.create({
-    baseURL: "http://localhost:22393/",
+    baseURL: "http://localhost:6894/",
     headers: {
         "Authorization": `Bearer ${getToken()}`
       }

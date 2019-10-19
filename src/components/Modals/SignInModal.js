@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SignInService } from "../../services/SignInService";
-import FacebookLoginButton from "../CustomTags/FacebookLiginButton";
+import FacebookLoginButton from "../CustomTags/FacebookLoginButton";
 import GoogleLoginButton from "../CustomTags/GoogleLoginButton";
 
 import classnames from "classnames";
@@ -25,7 +25,6 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [SignInState, SetSignInState] = useState(null);
   const emailFocus = () => {
-
     setEmailFocused(!emailFocused);
   };
   const passwordFocus = () => {
@@ -41,6 +40,7 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
         SetSignInState(true);
         localStorage.setItem("token", token.data.access_token);
         localStorage.setItem("name", token.data.userName);
+        localStorage.setItem("profilePicture", token.data.profilePicture);
         changeToggleModal();
       } else {
         SetSignInState(false);
@@ -48,9 +48,7 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
     } catch (ex) {
       console.log(ex);
     }
-  }
- 
-
+  };
 
   const SignupSchema = Yup.object().shape({
     password: Yup.string()
@@ -77,9 +75,16 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
               <small>Sign in with</small>
             </div>
             <div className="btn-wrapper text-center">
-              <FacebookLoginButton />
-              <GoogleLoginButton />
-              
+              <FacebookLoginButton
+                changeToggleModal={() => {
+                  changeToggleModal();
+                }}
+              />
+              <GoogleLoginButton
+                changeToggleModal={() => {
+                  changeToggleModal();
+                }}
+              />
             </div>
           </CardHeader>
           <CardBody className="px-lg-5 py-lg-5">
@@ -93,7 +98,7 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
               }}
               validationSchema={SignupSchema}
               onSubmit={values => {
-                console.log(values)
+                console.log(values);
                 OnSubmittingSignIn(values);
               }}
             >
@@ -104,25 +109,25 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
                       focused: emailFocus
                     })}
                   >
-                   <InputGroup className="input-group-alternative">	
-                      <InputGroupAddon addonType="prepend">	
-                        <InputGroupText>	
-                          <i className="ni ni-email-83" />	
-                        </InputGroupText>	
-                      </InputGroupAddon>	
-                      <Input	
-                        tag={Field}	
-                        name="email"	
-                        placeholder="Email"	
-                        type="text"	
-                        onFocus={emailFocus}	
-                        onBlur={emailFocus}	
-                      />	
-                    </InputGroup>	
-                  </FormGroup>	
+                    <InputGroup className="input-group-alternative">
+                      <InputGroupAddon addonType="prepend">
+                        <InputGroupText>
+                          <i className="ni ni-email-83" />
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <Input
+                        tag={Field}
+                        name="email"
+                        placeholder="Email"
+                        type="text"
+                        onFocus={emailFocus}
+                        onBlur={emailFocus}
+                      />
+                    </InputGroup>
+                  </FormGroup>
 
-                  {errors.email && touched.email ? (	
-                    <small style={{ color: "red" }}> {errors.mail}</small>	
+                  {errors.email && touched.email ? (
+                    <small style={{ color: "red" }}> {errors.mail}</small>
                   ) : null}
                   <FormGroup
                     className={classnames({
@@ -168,7 +173,7 @@ const SignInModal = ({ toggleModal, changeToggleModal }) => {
                       <span className="text-muted">Remember me</span>
                     </label>
                   </div>
-                  
+
                   <div className="text-center">
                     <Button className="my-4" color="primary" type="submit">
                       Sign in
